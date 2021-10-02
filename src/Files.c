@@ -75,6 +75,9 @@ char*** readCsvFile(FILE* csvFile, char*** matrixData, size_t* rows, size_t* row
     return matrixData;
 }
 
+
+
+
 FILE* writeCsvFile(FILE* csvFile, char*** data, size_t rowsWithData, size_t columnsWithData){
     
     for(size_t i = 0; i < rowsWithData; i++){
@@ -93,6 +96,43 @@ FILE* writeCsvFile(FILE* csvFile, char*** data, size_t rowsWithData, size_t colu
     return csvFile;
 }
 
+
+
+FILE* createConfigFile(FILE* configFile){
+
+    struct stat attrib;
+    char date[10];   
+    
+    stat("config.ini", &attrib);
+    strftime(date, 10, "%d-%m-%y", localtime(&(attrib.st_ctime)));
+
+    fprintf(configFile, "#CREATED AT: %s\n\n", date);
+	fprintf(configFile, "[app]\n");
+    fprintf(configFile, "%s\n", "width=42");
+    fprintf(configFile, "%s\n", "height=100");
+    fprintf(configFile, "%s\n", "color=1");
+
+    return configFile;
+}
+
+
+FILE* editConfigFile(FILE* configFile, int width, int height, int color){
+
+    struct stat attrib;
+    char date[10];   
+    
+    stat("config.ini", &attrib);
+    strftime(date, 10, "%d-%m-%y", localtime(&(attrib.st_ctime)));
+
+    fprintf(configFile, "#CHANGE AT: %s\n\n", date);
+	fprintf(configFile, "[app]\n");
+    fprintf(configFile, "width=%d\n", width);
+    fprintf(configFile, "height%d\n", height);
+    fprintf(configFile, "color=%d\n", color);
+
+    return configFile;       
+
+}
 
 //STATICS
 static ERROR_CODE fileExist(FILE* fileToCheck){

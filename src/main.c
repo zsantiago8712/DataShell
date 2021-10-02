@@ -6,10 +6,13 @@ int main(void){
 
     DataShell app = NULL;
     Menu menuApp = NULL;
+    Config configApp = NULL;
 
+    configApp = initConfig();    
     app = initDataShell();
     menuApp = initMenu();
 
+    configureApp(configApp);
 
     while(1){
         

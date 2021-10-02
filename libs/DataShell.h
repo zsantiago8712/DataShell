@@ -6,6 +6,7 @@
 #include "Memory.h"
 #include "Files.h"
 #include "fort.h"
+#include "Config.h"
 
 typedef struct _DataShell* DataShell;
 
