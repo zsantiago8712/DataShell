@@ -1,7 +1,6 @@
-
-CC = clang
+CC = gcc
 CXXFLAGS = -std=c11 -Wall -g
-LDFLAGS =
+LDFLAGS =  
 
 
 APPNAME = myapp.out
@@ -14,10 +13,10 @@ OBJ = $(SRC:$(SRCDIR)/%.c=$(OBJDIR)/%.o)
 RM = rm
 DELOBJ = $(OBJ)
 
-all: $(APPNAME)
+all: $(APPNAME) 
 
 # Builds the app
-$(APPNAME): $(OBJ)
+$(APPNAME): $(OBJ) 
 	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
 
