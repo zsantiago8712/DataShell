@@ -4,18 +4,16 @@
 static ERROR_CODE setInitConfiguratinosApp(Config configApp);
 static void restartApp(Config configApp);
 static ERROR_CODE checkConfig(Config configApp);
-static char* createConfigCommandSize(Config configApp);
 
 
 struct _Config{
     
     int width;
     int height;
-    union{
-        int numColor;
-        char* hexColor;
-    }color;
-	
+	int numColor;
+	char* hexColor;
+	int typeMenu;
+
 
 };
 
@@ -33,8 +31,8 @@ Config initConfig(void){
 
     config->width = -1;
     config->height = -1;
-	config->color.numColor = -1;
-
+	config->numColor = -1;
+	config->typeMenu = -1;
     return config;
 }
 
@@ -58,7 +56,7 @@ void configureApp(Config configApp){
 
     system(CLEAN);
     system(createConfigCommandSize(configApp));
-    printf("%s", configApp->color.hexColor);
+    printf("%s", configApp->hexColor);
     
 }
 
@@ -72,10 +70,10 @@ static ERROR_CODE setInitConfiguratinosApp(Config configApp){
     if(config == NULL)
         return CONFIG_FILE_NOT_FOUND;
 
-    
+	ini_sget(config, "app", "menu", "%d", &configApp->typeMenu);
     ini_sget(config, "app", "width", "%d", &configApp->width);
     ini_sget(config, "app", "height", "%d", &configApp->height);
-    ini_sget(config, "app", "color", "%d", &configApp->color.numColor);
+    ini_sget(config, "app", "color", "%d", &configApp->numColor);
 
 
 
@@ -110,14 +108,17 @@ static void restartApp(Config configApp){
 
 static ERROR_CODE checkConfig(Config configApp){
 
-    if(configApp->color.numColor < 0 || configApp->height < 0 || configApp->width < 0)
+    if(configApp->numColor < 0 || configApp->height < 0 || configApp->width < 0 || configApp->typeMenu < 0)
         return CONFIG_ERROR;
+
+	if(configApp->typeMenu > 1)
+		configApp->typeMenu = 1;
 
     return ERROR_OK;
 }
 
 
-static char* createConfigCommandSize(Config configApp){
+char* createConfigCommandSize(Config configApp){
     
     char command[BUFSIZ] = "resize -s ";
     char number[20];
@@ -134,14 +135,83 @@ static char* createConfigCommandSize(Config configApp){
 
 
 //SETTERS
+
+ERROR_CODE setNumColor(Config confingApp, int newNumColor){
+    
+    if(confingApp != NULL)
+        confingApp->numColor = newNumColor;
+
+    return ERROR_OK;
+}
+
 ERROR_CODE setColor(Config configApp){
     
     
-    const char* configListColors[] = { "\x1B[0m",  "\x1B[31m", "\x1B[32m"};
+    const char* configListColors[] = { "\x1B[0m",  "\x1B[31m", "\x1B[32m", "\033[36m"};
     
     if(configApp != NULL)
-        configApp->color.hexColor = strdup(configListColors[configApp->color.numColor]);
+        configApp->hexColor = strdup(configListColors[configApp->numColor]);
     
     return ERROR_OK;  
 }
+
+
+ERROR_CODE setWidth(Config configApp, int newWidth){
+    
+    if(newWidth  < 0)
+        newWidth = 0;
+
+    if(configApp != NULL)
+        configApp->width = newWidth;
+
+    return ERROR_OK;
+}
+
+
+
+ERROR_CODE setHeight(Config configApp, int newHeight){
+    
+    if(newHeight  < 0)
+        newHeight = 0;
+
+    if(configApp != NULL)
+        configApp->height = newHeight;
+
+    return ERROR_OK;
+}
+
+
+ERROR_CODE setMenuType(Config configApp){
+	if(configApp != NULL){
+		if(configApp->typeMenu == 1)
+			configApp->typeMenu = 0;
+		else if(configApp->typeMenu == 0)
+			configApp->typeMenu = 1;
+	}
+
+	return ERROR_OK;
+}
+
+
+//GETTERS
+int getWidth(Config configApp){
+    return configApp->width;
+}
+
+int getHeight(Config configApp){
+    return configApp->height;
+}
+
+int getNumColor(Config configApp){
+    return configApp->numColor;
+}
+
+char* getColor(Config configApp){
+    return configApp->hexColor;
+}
+
+int getTypeMenu(Config configApp){
+	return configApp->typeMenu;
+}
+
 

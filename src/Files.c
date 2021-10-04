@@ -108,6 +108,7 @@ FILE* createConfigFile(FILE* configFile){
 
     fprintf(configFile, "#CREATED AT: %s\n\n", date);
 	fprintf(configFile, "[app]\n");
+	fprintf(configFile, "menu=1\n");
     fprintf(configFile, "%s\n", "width=42");
     fprintf(configFile, "%s\n", "height=100");
     fprintf(configFile, "%s\n", "color=1");
@@ -116,7 +117,7 @@ FILE* createConfigFile(FILE* configFile){
 }
 
 
-FILE* editConfigFile(FILE* configFile, int width, int height, int color){
+FILE* editConfigFile(FILE* configFile, int width, int height, int color, int menuType){
 
     struct stat attrib;
     char date[10];   
@@ -126,8 +127,9 @@ FILE* editConfigFile(FILE* configFile, int width, int height, int color){
 
     fprintf(configFile, "#CHANGE AT: %s\n\n", date);
 	fprintf(configFile, "[app]\n");
+	fprintf(configFile, "menu=%d\n", menuType);
     fprintf(configFile, "width=%d\n", width);
-    fprintf(configFile, "height%d\n", height);
+    fprintf(configFile, "height=%d\n", height);
     fprintf(configFile, "color=%d\n", color);
 
     return configFile;       

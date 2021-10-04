@@ -20,7 +20,7 @@ char*** readCsvFile(FILE* csvFile, char*** matrixData, size_t* rows, size_t* row
 FILE* writeCsvFile(FILE* csvFile, char*** data, size_t rowsWithData, size_t columnsWithData);
 void formatString(char* string, char charToClean);
 FILE* createConfigFile(FILE* configFile);
-
+FILE* editConfigFile(FILE* configFile, int width, int height, int color, int menuType);
 
 
 #endif

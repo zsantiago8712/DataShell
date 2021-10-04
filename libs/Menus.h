@@ -14,14 +14,19 @@ Menu initMenu(void);
 void menuController(Menu menuApp, int state);
 void printMenu(Menu menuApp);
 void printHeader(void);
+void updateMenu(Menu menuApp);
+
 
 //GETTERS
 char** getMenuList(Menu menuApp);
 int getOption(Menu menuApp);
+int getNumOptions(Menu menuApp);
 
 //SETTERS
 void setMenuList(Menu menuApp, int state);
 ERROR_CODE setOption(Menu menuApp, int newOption);
+ERROR_CODE setDynamicOption(Menu menuApp, char newOption);
+
 
 //Destructors
 Menu freeMenu(Menu menuApp);

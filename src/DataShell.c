@@ -1,7 +1,7 @@
 #include "../libs/DataShell.h"
 
 
-static void exitApp(DataShell app, Menu menuApp);
+static void exitApp(DataShell app, Menu menuApp, Config configApp);
 static void returnMainMenu(DataShell app, Menu menuApp);
 static ERROR_CODE showCSVFile(DataShell app, Menu menuApp);
 static void reprintData(DataShell app);
@@ -9,7 +9,9 @@ static void printData(DataShell app);
 static ERROR_CODE setFileName(DataShell app);
 static ERROR_CODE addColumn(DataShell app);
 static char* getNameNewColumn(void);
-static void changeColor(DataShell app, int option);
+static int getInt(char input);
+static void getSizeFromInput(Config configApp);
+static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, bool isWindoSizeChange);
 
 
 
@@ -22,6 +24,7 @@ struct _DataShell{
     size_t rowsWithData;
     char*** data;
     char fileName[BUFSIZ];
+
 };
 
 
@@ -60,40 +63,150 @@ DataShell freeDataShell(DataShell app){
 //FUNCIONES PRINCIPALES
 void selectOption(DataShell app, Menu menuApp){
 
-    char input = '\0';
+    int input = -1;
 
 	do {
     
         reprintData(app);
         printMenu(menuApp);
-    }while((input = getchar()) != '0' && input != '1' && '2' != input);
+    }while((input =  getInt(getchar())) < 0 && input >= getNumOptions(menuApp) && input == EOF);
 
-    setOption(menuApp, input - '0');
+    setOption(menuApp, input);
 
 }
 
 
-void controller(DataShell app, Menu menuApp){
+
+
+void selectOption2(DataShell app, Menu menuApp){
     
-    if(app->state == 0 && getOption(menuApp) == 0)
-        showCSVFile(app, menuApp);
-    else if(app->state == 2 && getOption(menuApp) == 0)
-        addColumn(app);
-    else if(app->state == 0 && getOption(menuApp) == 1)
-        app->state= 1;
-    else if(app->state == 1 && getOption(menuApp) == 0)
-        app->state = 3;
-    else if(app->state == 3){
-        changeColor(app, getOption(menuApp));
-        returnMainMenu(app, menuApp);
-    }
-    else if(getOption(menuApp) == 1)
-        returnMainMenu(app, menuApp);
-    else if(getOption(menuApp) == 2)
-        exitApp(app, menuApp);
+    char input = '\0';
+	int firstInput = 1;
 
-    setOption(menuApp, 0);
+    do{
+
+        setDynamicOption(menuApp, input);
+        reprintData(app);
+        updateMenu(menuApp);
+
+		if(firstInput)
+			firstInput = 0;
+		else
+			clearBuffer();
+
+
+    }while((input = getchar()) != 'x' && input != 'X' && input != EOF);
+
 }
+
+
+static int getInt(char input){
+       
+
+    if(isdigit(input) && input != '\0')
+    {
+        return input - '0';
+    }
+    
+    return  -1;
+}
+
+
+
+//ESTADOS 
+// 0 - MENU PRINCIPAL
+//  0 - 0 SHOW_CSV_FILE
+//  0 - 1 CONFIGURATIONS
+//  0 - 2 EXIT
+// 1 - MENU DE COLORES
+//  1 - (0 - 3) OPCIONES DE COLORES
+//  1 - 4 RETURN_TO_MAIN_MENU 
+//  1 - 5 EXIT 
+// 2 - SHOW_CSV_FILE
+//  2 - 0 ADD_COLUMN
+//  2 - 1 RETURN_TO_MAIN_MENU
+//  2 - 2 EXIT
+// 3 - CHANGE_COLOR
+// 3 - 0 CHANGE_COLOR 
+
+
+void dynamicController(DataShell app, Menu menuApp, Config configApp){
+
+	switch(app->state){
+      case 0:
+          switch(getOption(menuApp)){
+              case 0:
+                  showCSVFile(app, menuApp);
+                  break;
+              case 1:
+                  app->state = 1;
+		          setOption(menuApp, 0);
+                  break;
+             case 2:
+                  exitApp(app, menuApp, configApp);
+                  break;
+          }
+		  break;
+      case 1:
+          switch(getOption(menuApp)){
+              case 0:
+                  app->state = 3;
+                  break;
+              case 1:
+                  getSizeFromInput(configApp);
+                  reconfigureApp(app, menuApp, configApp, true);
+				  app->state = 1;
+				  break;
+	          case 2:
+		          setMenuType(configApp);
+				  app->state = 0;
+		          setOption(menuApp, 0);
+				  break;
+              case 3:
+                  returnMainMenu(app, menuApp);
+                  break;
+              case 4:
+                  exitApp(app, menuApp, configApp);
+		          break;
+		  }
+		  break;
+      case 2:
+          switch(getOption(menuApp)){
+              case 0:
+                  addColumn(app);
+                  break;
+              case 1:
+                  returnMainMenu(app, menuApp);
+                  break;
+              case 2:
+                  exitApp(app, menuApp, configApp);
+                  break;
+          }
+		  break;
+	  case 3:
+		  switch (getOption(menuApp)) {
+			  case 0: case 1: case 2: case 3:
+				  setNumColor(configApp, getOption(menuApp));
+				  reconfigureApp(app, menuApp, configApp, false);
+			      break;
+			  case 4:
+				  returnMainMenu(app, menuApp);
+				  break;
+			  case 5:
+				  exitApp(app, menuApp, configApp);
+				  break;
+		  }
+		  break;
+    }
+}
+
+
+
+
+
+
+
+
 
 
 void clearBuffer(void){
@@ -217,35 +330,40 @@ static ERROR_CODE addColumn(DataShell app){
     return ERROR_OK;    
 }
 
+
+
 static char* getNameNewColumn(void){
-    
+
     char nameNewColumn[BUFSIZ];
+	puts("ENTER THE NAME OF THE NEW COLUMN");
     fgets(nameNewColumn, BUFSIZ, stdin);
 
     nameNewColumn[strcspn(nameNewColumn, "\n")] = 0;
 
-    return nameNewColumn;
+    return strdup(nameNewColumn);
 }
+
 
 
 static void returnMainMenu(DataShell app, Menu menuApp) {
 
-	if (app->state == 2)
+	if (app->state == 2){
 		app->data = freeMatrixString(app->data, app->rows);
+		app->rows = 8;
+		app->rowsWithData = 8;
+		app->columns = 8;
+		app->columnsWithData = 8;
+		app->data = createMatrixString(app->data, app->rows, app->columns);
+	}
 
 	app->state = 0;
-	app->rows = 8;
-	app->rowsWithData = 8;
-	app->columns = 8;
-	app->columnsWithData = 8;
     setOption(menuApp, 0);
 
-	app->data = createMatrixString(app->data, app->rows, app->columns);
 }
 
 
 
-static void exitApp(DataShell app, Menu menuApp){
+static void exitApp(DataShell app, Menu menuApp, Config configApp){
     puts("EXIT APP THANKS FOR COMMING =)");
 
     app->data = freeMatrixString(app->data, app->rows);
@@ -253,6 +371,7 @@ static void exitApp(DataShell app, Menu menuApp){
    
     menuApp = freeMenu(menuApp);
     app = freeDataShell(app);
+    configApp = freeConfig(configApp);
     exit(ERROR_OK);
 }
 
@@ -265,6 +384,11 @@ static void reprintData(DataShell app){
     else if(app->state == 2)
         printData(app);
 }
+
+
+
+
+
 
 
 
@@ -290,12 +414,47 @@ static void printData(DataShell app){
 }
 
 
-static void changeColor(DataShell app, int option){
-    
-     const char* configListColors[] = { "\x1B[0m",  "\x1B[31m", "\x1B[32m"};
 
-     printf("%s", configListColors[option]);
-    
+static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, bool isWindoSizeChange){
+
+    FILE* configFile = NULL;
+
+    configFile = newFile("config.ini", WRITE);
+
+
+    editConfigFile(configFile, getWidth(configApp), getHeight(configApp), getNumColor(configApp), getTypeMenu(configApp));
+    configFile = closeFile(configFile);
+
+	configFile = closeFile(configFile);
+
+
+     
+    if(isWindoSizeChange)    
+        system(createConfigCommandSize(configApp));
+	else{
+	    setColor(configApp);
+	    printf("%s", getColor(configApp));
+	}
+
+
+	setOption(menuApp, 0);
+
 }
 
 
+
+static void getSizeFromInput(Config configApp){
+
+    char input[BUFSIZ];
+    char* pEnd;
+
+    printf("ENTER THE WIDTH SIZE: ");
+    fgets(input, BUFSIZ, stdin);
+    setWidth(configApp, strtol(input, &pEnd, 10));
+    
+
+    printf("ENTER THE HEIGHT SIZE: ");
+    fgets(input, BUFSIZ, stdin);
+    setHeight(configApp, strtol(input, &pEnd, 10));
+
+}

@@ -15,12 +15,14 @@ int main(void){
     configureApp(configApp);
 
     while(1){
-        
-        setMenuList(menuApp, getState(app));
-        selectOption(app, menuApp);
 
+	    setMenuList(menuApp, getState(app));
+		if(getTypeMenu(configApp))
+            selectOption2(app, menuApp);
+		else
+            selectOption(app, menuApp);
 		clearBuffer();
-        controller(app, menuApp);
+        dynamicController(app, menuApp, configApp);
     }
 
       

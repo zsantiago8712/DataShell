@@ -6,6 +6,7 @@ struct _Menu{
     
     char* menuOptions[BUFSIZ]; 
     int option;
+    int numOptions;
 };
 
 
@@ -23,7 +24,7 @@ Menu initMenu(void){
     }
 
     menuApp->option = 0;
-
+    menuApp->numOptions = 0;
     return menuApp;
 }
 
@@ -51,23 +52,29 @@ int getOption(Menu menuApp){
     return menuApp->option;
 }
 
-
+int getNumOptions(Menu menuApp){
+    return menuApp->numOptions;
+}
 
 
 //SETTER
 void setMenuList(Menu menuApp, int state){
 
-
-    const char* list[4][5] = { 
-                            {"SHOW CSV FILE", "CONFIGS","EXIT", NULL},
-                            {"CHANGE COLOR", "RETURN TO MAIN MENU", "EXIT", NULL},
+	int i;
+	menuApp->numOptions = 0;
+    const char* list[5][7] = { 
+                            {"SHOW CSV FILE", "CHANGE CONFIGURATIONS","EXIT", NULL},
+                            {"CHANGE COLOR", "CHANGE WIDOW SIZE", "CHANGE MENU TYPE", "RETURN TO MAIN MENU", "EXIT", NULL},
                             {"ADD COLUMN", "RETURN TO MAIN MENU", "EXIT", NULL},
-                            {"WHITE", "RED", "GREEN", NULL}
+                            {"WHITE", "RED", "GREEN", "CYAN", "RETURN TO MAIN MENU", "EXIT", NULL}
                         };
 
 
-    for(int i = 0; list[state][i] != (void*)0; i++)
+    for(i = 0; list[state][i] != (void*)0; i++){
         menuApp->menuOptions[i] = strdup(list[state][i]);
+        menuApp->numOptions ++;
+    }
+	menuApp->menuOptions[i] = NULL;
 }
 
 
@@ -84,17 +91,48 @@ ERROR_CODE setOption(Menu menuApp, int newOption){
 }
 
 
+ERROR_CODE setDynamicOption(Menu menuApp, char newOption){
+
+    newOption = tolower(newOption);
+    
+    if(newOption == 'w')
+        menuApp->option --;
+    else if(newOption == 's')
+        menuApp->option ++;
+
+
+    if(menuApp->option >= menuApp->numOptions)
+        menuApp->option = 0;
+    else if(menuApp->option < 0)
+        menuApp->option = menuApp->numOptions - 1;
+
+    return ERROR_OK;
+}
+
 
 
 
 void printMenu(Menu menuApp){
 
+	puts("");
     for(int i = 0; menuApp->menuOptions[i] != (void*)0; i++)
-        printf("[%d]%s\n", i, menuApp->menuOptions[i]);
+        printf("\t\t\t[%d]%s\n", i, menuApp->menuOptions[i]);
 }
 
 
 
+void updateMenu(Menu menuApp){
+
+	puts("");
+    for(int i = 0; menuApp->menuOptions[i] != (void*)0; i++){
+        
+        if(menuApp->option == i)
+            printf("\t\t\t[██] %s\n", menuApp->menuOptions[i]);
+        else 
+            printf("\t\t\t[  ] %s\n", menuApp->menuOptions[i]);
+    }
+	puts("\n\n\n\nTO MOVE UP PRESS [W/w], TO MODE DOWN [S/s] AND TO SELECT OPTION PRESS [X/x]\n");
+}
 
 
 
