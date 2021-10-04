@@ -21,8 +21,8 @@ cd DataShell; make;
 > Note: `./myapp.out` aun es necesario correr este comnado para pder usar el programa!!
 
 # Librerias externas usadas
-[A tiny ANSI C library for loading .ini config files](https://github.com/rxi/ini)
-[Library to create FORmatted Tables](https://github.com/seleznevae/libfort)
+1) [A tiny ANSI C library for loading .ini config files](https://github.com/rxi/ini)
+2) [Library to create FORmatted Tables](https://github.com/seleznevae/libfort)
 > Note: `No es necesaria descargarlas ya estan impelementas en el mismo proyecto`
 
 
