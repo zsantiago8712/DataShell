@@ -34,4 +34,5 @@ int getHeight(Config configApp);
 int getNumColor(Config configApp);
 char* getColor(Config configApp);
 int getTypeMenu(Config configApp);
+char* getColorSelection(Config configApp);
 #endif

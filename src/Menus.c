@@ -121,17 +121,19 @@ void printMenu(Menu menuApp){
 
 
 
-void updateMenu(Menu menuApp){
+void updateMenu(Menu menuApp, Config configApp){
 
 	puts("");
     for(int i = 0; menuApp->menuOptions[i] != (void*)0; i++){
         
         if(menuApp->option == i)
-            printf("\t\t\t[██] %s\n", menuApp->menuOptions[i]);
+            printf("\t\t\t%s[██] %s\n", getColorSelection(configApp), menuApp->menuOptions[i]);
         else 
-            printf("\t\t\t[  ] %s\n", menuApp->menuOptions[i]);
+            printf("\t\t\t%s[  ] %s\n", getColor(configApp), menuApp->menuOptions[i]);
     }
-	puts("\n\n\n\nTO MOVE UP PRESS [W/w], TO MODE DOWN [S/s] AND TO SELECT OPTION PRESS [X/x]\n");
+
+	printf("\n\n\n\n %sTO MOVE UP PRESS [W/w], TO MODE DOWN [S/s] AND TO SELECT OPTION PRESS [X/x]\n", getColorSelection(configApp));
+	printf("%s", getColor(configApp));
 }
 
 
@@ -140,12 +142,12 @@ void printHeader(void){
 
 
     system("clear");
-	puts(" ░█████╗░██████╗░██╗░░░██╗███╗░░██╗░█████╗░██╗░░██╗  ");
-	puts("░██╔══██╗██╔══██╗██║░░░██║████╗░██║██╔══██╗██║░░██║  ");
-	puts(" ██║░░╚═╝██████╔╝██║░░░██║██╔██╗██║██║░░╚═╝███████║  ");
-	puts(" ██║░░██╗██╔══██╗██║░░░██║██║╚████║██║░░██╗██╔══██║  ");
-	puts(" ╚█████╔╝██║░░██║╚██████╔╝██║░╚███║╚█████╔╝██║░░██║  ");
-	puts( "░╚════╝░╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝░╚═══╝░ ╚═╝░░ ╚╝  ");
+	puts(" ░█████╗░██████╗░██╗░░░██╗███╗░░██╗░█████╗░██╗░░██╗");
+	puts("░██╔══██╗██╔══██╗██║░░░██║████╗░██║██╔══██╗██║░░██║");
+	puts(" ██║░░╚═╝██████╔╝██║░░░██║██╔██╗██║██║░░╚═╝███████║");
+	puts(" ██║░░██╗██╔══██╗██║░░░██║██║╚████║██║░░██╗██╔══██║");
+	puts(" ╚█████╔╝██║░░██║╚██████╔╝██║░╚███║╚█████╔╝██║░░██║");
+	puts( "░╚════╝░╚═╝░░╚═╝░╚═════╝░╚═╝░░╚══╝░╚═══╝░ ╚═╝░░ ╚╝");
 	puts("");
 	puts("			██████╗░░█████╗░████████╗░█████╗░░██████╗██╗░░██╗███████╗██╗░░░░░██╗░░░░░");
 	puts("			██╔══██╗██╔══██╗╚══██╔══╝██╔══██╗██╔════╝██║░░██║██╔════╝██║░░░░░██║░░░░░");

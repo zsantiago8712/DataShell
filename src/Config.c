@@ -193,6 +193,7 @@ ERROR_CODE setMenuType(Config configApp){
 }
 
 
+
 //GETTERS
 int getWidth(Config configApp){
     return configApp->width;
@@ -213,5 +214,23 @@ char* getColor(Config configApp){
 int getTypeMenu(Config configApp){
 	return configApp->typeMenu;
 }
+
+char* getColorSelection(Config configApp){
+	const char* configListColors[] = { "\x1B[0m",  "\x1B[31m", "\x1B[32m", "\033[36m"};
+
+	switch (configApp->numColor) {
+		case 0:
+			return strdup(configListColors[1]);
+		case 1:
+			return strdup(configListColors[0]);
+		case 2:
+			return strdup(configListColors[3]);
+		case 3:
+			return strdup(configListColors[2]);
+	}
+
+	return strdup(configListColors[0]);
+}
+
 
 

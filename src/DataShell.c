@@ -11,7 +11,7 @@ static ERROR_CODE addColumn(DataShell app);
 static char* getNameNewColumn(void);
 static int getInt(char input);
 static void getSizeFromInput(Config configApp);
-static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, bool isWindoSizeChange);
+static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, int isWindoSizeChange);
 
 
 
@@ -78,7 +78,7 @@ void selectOption(DataShell app, Menu menuApp){
 
 
 
-void selectOption2(DataShell app, Menu menuApp){
+void selectOption2(DataShell app, Menu menuApp, Config configApp){
     
     char input = '\0';
 	int firstInput = 1;
@@ -87,7 +87,7 @@ void selectOption2(DataShell app, Menu menuApp){
 
         setDynamicOption(menuApp, input);
         reprintData(app);
-        updateMenu(menuApp);
+        updateMenu(menuApp, configApp);
 
 		if(firstInput)
 			firstInput = 0;
@@ -154,11 +154,12 @@ void dynamicController(DataShell app, Menu menuApp, Config configApp){
                   break;
               case 1:
                   getSizeFromInput(configApp);
-                  reconfigureApp(app, menuApp, configApp, true);
+                  reconfigureApp(app, menuApp, configApp, 1);
 				  app->state = 1;
 				  break;
 	          case 2:
 		          setMenuType(configApp);
+		          reconfigureApp(app, menuApp, configApp, 2);
 				  app->state = 0;
 		          setOption(menuApp, 0);
 				  break;
@@ -187,7 +188,7 @@ void dynamicController(DataShell app, Menu menuApp, Config configApp){
 		  switch (getOption(menuApp)) {
 			  case 0: case 1: case 2: case 3:
 				  setNumColor(configApp, getOption(menuApp));
-				  reconfigureApp(app, menuApp, configApp, false);
+				  reconfigureApp(app, menuApp, configApp, 0);
 			      break;
 			  case 4:
 				  returnMainMenu(app, menuApp);
@@ -415,7 +416,7 @@ static void printData(DataShell app){
 
 
 
-static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, bool isWindoSizeChange){
+static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, int isWindoSizeChange){
 
     FILE* configFile = NULL;
 
@@ -429,9 +430,9 @@ static void reconfigureApp(DataShell app, Menu menuApp, Config configApp, bool i
 
 
      
-    if(isWindoSizeChange)    
+    if(isWindoSizeChange == 1)
         system(createConfigCommandSize(configApp));
-	else{
+	else if(isWindoSizeChange == 0){
 	    setColor(configApp);
 	    printf("%s", getColor(configApp));
 	}

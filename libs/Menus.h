@@ -2,7 +2,8 @@
 #define MENUS_H
 
 #include "Libs.h"
-#include "Memory.h" 
+#include "Memory.h"
+#include "Config.h"
 
 typedef struct _Menu* Menu;
 
@@ -14,7 +15,7 @@ Menu initMenu(void);
 void menuController(Menu menuApp, int state);
 void printMenu(Menu menuApp);
 void printHeader(void);
-void updateMenu(Menu menuApp);
+void updateMenu(Menu menuApp, Config configApp);
 
 
 //GETTERS

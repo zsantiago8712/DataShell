@@ -18,7 +18,7 @@ int main(void){
 
 	    setMenuList(menuApp, getState(app));
 		if(getTypeMenu(configApp))
-            selectOption2(app, menuApp);
+            selectOption2(app, menuApp, configApp);
 		else
             selectOption(app, menuApp);
 		clearBuffer();

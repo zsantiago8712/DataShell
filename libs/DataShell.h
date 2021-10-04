@@ -20,11 +20,8 @@ DataShell freeDataShell(DataShell app);
 
 //FUNCIONES PRINCIPALES
 void selectOption(DataShell app, Menu menuApp);
-//void controller(DataShell app, Menu menuApp);
 void clearBuffer(void);
-
-//DEBUG NEWIMPLEMETACION
-void selectOption2(DataShell app, Menu menuApp);
+void selectOption2(DataShell app, Menu menuApp, Config configApp);
 void dynamicController(DataShell app, Menu menuApp, Config configApp);
 
 
