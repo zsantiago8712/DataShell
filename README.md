@@ -18,7 +18,7 @@ Lo único que se requiere es tener un compilador de C11
 ```sh
 cd DataShell; make;
 ```
-> Note: `./myapp.out` aun es necesario correr este comnado para pder usar el programa!!
+> Note: `./myapp.out` aun es necesario correr este comnado para poder usar el programa!!
 
 # Librerias externas usadas
 1) [A tiny ANSI C library for loading .ini config files](https://github.com/rxi/ini)
